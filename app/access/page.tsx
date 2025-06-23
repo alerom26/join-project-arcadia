@@ -122,7 +122,7 @@ export default function AccessPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-green-700">Project Arcadia</CardTitle>
-          <CardDescription>Request access to join our environmental community</CardDescription>
+          <CardDescription>Check out more information on Project Arcadia and joining! But first, please fill out this access request since some confidential info is stored. After that, please get the member who invited you to approve your request!</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
