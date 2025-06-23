@@ -47,10 +47,10 @@ interface Application {
 }
 
 const interviewers = [
-  "Dr. Sarah Chen - Environmental Scientist",
-  "Mark Johnson - Sustainability Coordinator",
-  "Lisa Wang - Community Outreach Manager",
-  "David Kim - Research Director",
+  "Alex Romanov - Executive",
+  "Rupert McVey - Executive",
+  "Abhinav Santhosh - Head of Recruiting",
+  "Jasper Shaw - CEO",
 ]
 
 export default function AdminPage() {
