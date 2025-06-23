@@ -179,7 +179,7 @@ export default function AdminPage() {
     try {
       const { data: requestData, error: fetchError } = await supabase
         .from("access_requests")
-        .select("name, email") // Assuming email is available in access_requests or can be derived
+        .select("name") // Removed 'email' as it's not in the schema
         .eq("id", requestId)
         .single()
 
@@ -212,7 +212,7 @@ export default function AdminPage() {
           const { error: insertError } = await supabase.from("applications").insert({
             user_id: requestId, // Using request ID as user_id for now
             name: requestData.name,
-            email: requestData.email || `${requestData.name.toLowerCase().replace(/\s/g, ".")}@projectarcadia.xyz`, // Fallback email
+            email: `${requestData.name.toLowerCase().replace(/\s/g, ".")}` + "@projectarcadia.xyz", // Derived email
             stage: "application",
             test_unlocked: false,
             assigned_interviewer: null,
