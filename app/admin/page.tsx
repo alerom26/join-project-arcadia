@@ -164,6 +164,28 @@ export default function AdminPage() {
 
       if (error) throw error
 
+      // If approved, automatically add to applications
+      if (status === "approved") {
+        // For a real database, you'd insert into an 'applications' table here.
+        // For this mock, we'll add it to the state.
+        const newApplication: Application = {
+          id: requestId, // Reusing request ID for simplicity
+          name: requests.find((r) => r.id === requestId)?.name || "Unknown User",
+          email: `${
+            requests
+              .find((r) => r.id === requestId)
+              ?.name.toLowerCase()
+              .replace(/\s/g, ".") || "unknown"
+          }@projectarcadia.xyz`, // Mock email
+          stage: "application",
+          test_unlocked: false,
+          assigned_interviewer: null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }
+        setApplications((prev) => [...prev, newApplication])
+      }
+
       await loadRequests()
     } catch (err) {
       console.error("Failed to update request:", err)
