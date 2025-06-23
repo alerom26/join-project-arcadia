@@ -37,6 +37,7 @@ interface AccessRequest {
 
 interface Application {
   id: string
+  user_id: string
   name: string
   email: string
   stage: "application" | "test" | "interview" | "completed"
@@ -58,7 +59,7 @@ export default function AdminPage() {
   const [currentUser, setCurrentUser] = useState<any>(null)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [isLoadingAuth, setIsLoadingAuth] = useState(false) // Renamed to avoid conflict
+  const [isLoadingAuth, setIsLoadingAuth] = useState(false)
   const [error, setError] = useState("")
 
   // Access Request states
@@ -76,17 +77,36 @@ export default function AdminPage() {
 
   // Application Management states
   const [applications, setApplications] = useState<Application[]>([])
-  const [isLoadingApplications, setIsLoadingApplications] = useState(false) // Renamed
+  const [isLoadingApplications, setIsLoadingApplications] = useState(false)
   const [selectedApp, setSelectedApp] = useState<Application | null>(null)
   const [newInterviewer, setNewInterviewer] = useState("")
 
   useEffect(() => {
-    if (isAuthenticated) {
-      loadRequests()
-      loadAdminFacePhoto()
-      loadApplications() // Load applications when authenticated
+    const checkUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (user) {
+        const { data: adminData, error: adminError } = await supabase
+          .from("admin_users")
+          .select("*")
+          .eq("email", user.email)
+          .single()
+
+        if (!adminError && adminData) {
+          setCurrentUser(user)
+          setIsAuthenticated(true)
+          loadRequests()
+          loadAdminFacePhoto()
+          loadApplications()
+        } else {
+          await supabase.auth.signOut()
+          setError("Unauthorized: Admin access required.")
+        }
+      }
     }
-  }, [isAuthenticated])
+    checkUser()
+  }, [])
 
   const loadAdminFacePhoto = async () => {
     if (!currentUser) return
@@ -128,6 +148,9 @@ export default function AdminPage() {
 
       setCurrentUser(data.user)
       setIsAuthenticated(true)
+      loadRequests()
+      loadAdminFacePhoto()
+      loadApplications()
     } catch (err: any) {
       setError(err.message || "Login failed")
     } finally {
@@ -154,6 +177,14 @@ export default function AdminPage() {
 
   const handleApproval = async (requestId: string, status: "approved" | "rejected") => {
     try {
+      const { data: requestData, error: fetchError } = await supabase
+        .from("access_requests")
+        .select("name, email") // Assuming email is available in access_requests or can be derived
+        .eq("id", requestId)
+        .single()
+
+      if (fetchError || !requestData) throw fetchError || new Error("Request data not found")
+
       const { error } = await supabase
         .from("access_requests")
         .update({
@@ -166,29 +197,34 @@ export default function AdminPage() {
 
       // If approved, automatically add to applications
       if (status === "approved") {
-        // For a real database, you'd insert into an 'applications' table here.
-        // For this mock, we'll add it to the state.
-        const newApplication: Application = {
-          id: requestId, // Reusing request ID for simplicity
-          name: requests.find((r) => r.id === requestId)?.name || "Unknown User",
-          email: `${
-            requests
-              .find((r) => r.id === requestId)
-              ?.name.toLowerCase()
-              .replace(/\s/g, ".") || "unknown"
-          }@projectarcadia.xyz`, // Mock email
-          stage: "application",
-          test_unlocked: false,
-          assigned_interviewer: null,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
+        const { data: existingApp, error: existingAppError } = await supabase
+          .from("applications")
+          .select("id")
+          .eq("user_id", requestId) // Assuming requestId is the user_id
+          .single()
+
+        if (existingAppError && existingAppError.code !== "PGRST116") {
+          // PGRST116 means no rows found
+          throw existingAppError
         }
-        setApplications((prev) => [...prev, newApplication])
+
+        if (!existingApp) {
+          const { error: insertError } = await supabase.from("applications").insert({
+            user_id: requestId, // Using request ID as user_id for now
+            name: requestData.name,
+            email: requestData.email || `${requestData.name.toLowerCase().replace(/\s/g, ".")}@projectarcadia.xyz`, // Fallback email
+            stage: "application",
+            test_unlocked: false,
+            assigned_interviewer: null,
+          })
+          if (insertError) throw insertError
+        }
       }
 
       await loadRequests()
+      await loadApplications() // Reload applications to reflect changes
     } catch (err) {
-      console.error("Failed to update request:", err)
+      console.error("Failed to update request or application:", err)
     }
   }
 
@@ -325,20 +361,10 @@ export default function AdminPage() {
   const loadApplications = async () => {
     setIsLoadingApplications(true)
     try {
-      // Mock data for demonstration
-      const mockApplications: Application[] = [
-        {
-          id: "1",
-          name: "John Appleseed",
-          email: "example@projectarcadia.xyz",
-          stage: "application",
-          test_unlocked: false,
-          assigned_interviewer: null,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-      ]
-      setApplications(mockApplications)
+      const { data, error } = await supabase.from("applications").select("*").order("created_at", { ascending: false })
+
+      if (error) throw error
+      setApplications(data || [])
     } catch (err) {
       console.error("Failed to load applications:", err)
     } finally {
@@ -348,9 +374,13 @@ export default function AdminPage() {
 
   const unlockTest = async (applicationId: string) => {
     try {
-      setApplications((prev) =>
-        prev.map((app) => (app.id === applicationId ? { ...app, test_unlocked: true, stage: "test" } : app)),
-      )
+      const { error } = await supabase
+        .from("applications")
+        .update({ test_unlocked: true, stage: "test", updated_at: new Date().toISOString() })
+        .eq("id", applicationId)
+
+      if (error) throw error
+      await loadApplications() // Reload applications to reflect changes
     } catch (err) {
       console.error("Failed to unlock test:", err)
     }
@@ -358,11 +388,13 @@ export default function AdminPage() {
 
   const assignInterviewer = async (applicationId: string, interviewer: string) => {
     try {
-      setApplications((prev) =>
-        prev.map((app) =>
-          app.id === applicationId ? { ...app, assigned_interviewer: interviewer, stage: "interview" } : app,
-        ),
-      )
+      const { error } = await supabase
+        .from("applications")
+        .update({ assigned_interviewer: interviewer, stage: "interview", updated_at: new Date().toISOString() })
+        .eq("id", applicationId)
+
+      if (error) throw error
+      await loadApplications() // Reload applications to reflect changes
       setSelectedApp(null)
     } catch (err) {
       console.error("Failed to assign interviewer:", err)
