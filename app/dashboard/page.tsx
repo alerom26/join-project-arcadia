@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Leaf, Users, Calendar, HelpCircle, LogOut } from "lucide-react"
 import { isSessionValid, clearSession } from "@/lib/utils"
+import ApplicationStatus from "./application-status"
 
 export default function Dashboard() {
   const router = useRouter()
@@ -171,6 +172,9 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Continue with Application Section */}
+        <ApplicationStatus />
       </main>
     </div>
   )

@@ -18,7 +18,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Loader2, Check, X, MapPin, Clock, Camera, Upload, User } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Loader2, Check, X, MapPin, Clock, Camera, Upload, User, Users, TestTube, Unlock } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import { extractFaceEncoding } from "@/lib/face-recognition"
 
@@ -34,15 +35,37 @@ interface AccessRequest {
   photo_expires_at: string | null
 }
 
+interface Application {
+  id: string
+  name: string
+  email: string
+  stage: "application" | "test" | "interview" | "completed"
+  test_unlocked: boolean
+  assigned_interviewer: string | null
+  created_at: string
+  updated_at: string
+}
+
+const interviewers = [
+  "Dr. Sarah Chen - Environmental Scientist",
+  "Mark Johnson - Sustainability Coordinator",
+  "Lisa Wang - Community Outreach Manager",
+  "David Kim - Research Director",
+]
+
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [currentUser, setCurrentUser] = useState<any>(null)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingAuth, setIsLoadingAuth] = useState(false) // Renamed to avoid conflict
   const [error, setError] = useState("")
+
+  // Access Request states
   const [requests, setRequests] = useState<AccessRequest[]>([])
   const [isLoadingRequests, setIsLoadingRequests] = useState(false)
+
+  // Face Setup states
   const [facePhoto, setFacePhoto] = useState<File | null>(null)
   const [facePhotoPreview, setFacePhotoPreview] = useState<string | null>(null)
   const [showFaceCamera, setShowFaceCamera] = useState(false)
@@ -51,10 +74,17 @@ export default function AdminPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // Application Management states
+  const [applications, setApplications] = useState<Application[]>([])
+  const [isLoadingApplications, setIsLoadingApplications] = useState(false) // Renamed
+  const [selectedApp, setSelectedApp] = useState<Application | null>(null)
+  const [newInterviewer, setNewInterviewer] = useState("")
+
   useEffect(() => {
     if (isAuthenticated) {
       loadRequests()
       loadAdminFacePhoto()
+      loadApplications() // Load applications when authenticated
     }
   }, [isAuthenticated])
 
@@ -74,7 +104,7 @@ export default function AdminPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
+    setIsLoadingAuth(true)
     setError("")
 
     try {
@@ -101,7 +131,7 @@ export default function AdminPage() {
     } catch (err: any) {
       setError(err.message || "Login failed")
     } finally {
-      setIsLoading(false)
+      setIsLoadingAuth(false)
     }
   }
 
@@ -269,6 +299,89 @@ export default function AdminPage() {
     setPassword("")
   }
 
+  // Application Management Functions
+  const loadApplications = async () => {
+    setIsLoadingApplications(true)
+    try {
+      // Mock data for demonstration
+      const mockApplications: Application[] = [
+        {
+          id: "1",
+          name: "Alex Chen",
+          email: "alex.chen@email.com",
+          stage: "application",
+          test_unlocked: false,
+          assigned_interviewer: null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+        {
+          id: "2",
+          name: "Maria Rodriguez",
+          email: "maria.r@email.com",
+          stage: "test",
+          test_unlocked: true,
+          assigned_interviewer: null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+        {
+          id: "3",
+          name: "James Wilson",
+          email: "j.wilson@email.com",
+          stage: "interview",
+          test_unlocked: true,
+          assigned_interviewer: "Dr. Sarah Chen - Environmental Scientist",
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+      ]
+      setApplications(mockApplications)
+    } catch (err) {
+      console.error("Failed to load applications:", err)
+    } finally {
+      setIsLoadingApplications(false)
+    }
+  }
+
+  const unlockTest = async (applicationId: string) => {
+    try {
+      setApplications((prev) =>
+        prev.map((app) => (app.id === applicationId ? { ...app, test_unlocked: true, stage: "test" } : app)),
+      )
+    } catch (err) {
+      console.error("Failed to unlock test:", err)
+    }
+  }
+
+  const assignInterviewer = async (applicationId: string, interviewer: string) => {
+    try {
+      setApplications((prev) =>
+        prev.map((app) =>
+          app.id === applicationId ? { ...app, assigned_interviewer: interviewer, stage: "interview" } : app,
+        ),
+      )
+      setSelectedApp(null)
+    } catch (err) {
+      console.error("Failed to assign interviewer:", err)
+    }
+  }
+
+  const getStageColor = (stage: string) => {
+    switch (stage) {
+      case "application":
+        return "bg-blue-100 text-blue-800"
+      case "test":
+        return "bg-yellow-100 text-yellow-800"
+      case "interview":
+        return "bg-purple-100 text-purple-800"
+      case "completed":
+        return "bg-green-100 text-green-800"
+      default:
+        return "bg-gray-100 text-gray-800"
+    }
+  }
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
@@ -298,8 +411,8 @@ export default function AdminPage() {
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? (
+              <Button type="submit" className="w-full" disabled={isLoadingAuth}>
+                {isLoadingAuth ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Signing In...
@@ -421,6 +534,8 @@ export default function AdminPage() {
           </div>
         </div>
 
+        {/* Access Requests Section */}
+        <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-8">Access Requests</h2>
         <Tabs defaultValue="pending" className="space-y-4">
           <TabsList>
             <TabsTrigger value="pending">Pending Requests</TabsTrigger>
@@ -556,6 +671,273 @@ export default function AdminPage() {
                       </div>
                     ))}
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+
+        {/* Application Management Section */}
+        <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-8">Application Management</h2>
+        <Tabs defaultValue="all" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="all">All Applications</TabsTrigger>
+            <TabsTrigger value="application">Application Stage</TabsTrigger>
+            <TabsTrigger value="test">Test Stage</TabsTrigger>
+            <TabsTrigger value="interview">Interview Stage</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="all">
+            <Card>
+              <CardHeader>
+                <CardTitle>All Applications</CardTitle>
+                <CardDescription>Manage all membership applications</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {isLoadingApplications ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {applications.map((app) => (
+                      <div key={app.id} className="border rounded-lg p-4">
+                        <div className="flex justify-between items-start">
+                          <div className="space-y-2 flex-1">
+                            <h3 className="font-semibold text-lg">{app.name}</h3>
+                            <p className="text-sm text-gray-600">{app.email}</p>
+                            <div className="flex items-center space-x-2">
+                              <Badge className={getStageColor(app.stage)}>
+                                {app.stage.charAt(0).toUpperCase() + app.stage.slice(1)} Stage
+                              </Badge>
+                              {app.test_unlocked && (
+                                <Badge variant="outline" className="text-green-600">
+                                  <Unlock className="h-3 w-3 mr-1" />
+                                  Test Unlocked
+                                </Badge>
+                              )}
+                            </div>
+                            {app.assigned_interviewer && (
+                              <p className="text-sm text-gray-600">
+                                <strong>Interviewer:</strong> {app.assigned_interviewer}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex flex-col space-y-2 ml-4">
+                            {!app.test_unlocked && app.stage === "application" && (
+                              <Button
+                                size="sm"
+                                onClick={() => unlockTest(app.id)}
+                                className="bg-yellow-600 hover:bg-yellow-700"
+                              >
+                                <TestTube className="h-4 w-4 mr-1" />
+                                Unlock Test
+                              </Button>
+                            )}
+                            {app.stage === "test" && (
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button
+                                    size="sm"
+                                    onClick={() => setSelectedApp(app)}
+                                    className="bg-purple-600 hover:bg-purple-700"
+                                  >
+                                    <Users className="h-4 w-4 mr-1" />
+                                    Assign Interviewer
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                  <DialogHeader>
+                                    <DialogTitle>Assign Interviewer</DialogTitle>
+                                    <DialogDescription>Select an interviewer for {app.name}</DialogDescription>
+                                  </DialogHeader>
+                                  <div className="space-y-4">
+                                    <Select onValueChange={setNewInterviewer}>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select an interviewer" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {interviewers.map((interviewer) => (
+                                          <SelectItem key={interviewer} value={interviewer}>
+                                            {interviewer}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                    <Button
+                                      onClick={() => assignInterviewer(app.id, newInterviewer)}
+                                      disabled={!newInterviewer}
+                                      className="w-full"
+                                    >
+                                      Assign Interviewer
+                                    </Button>
+                                  </div>
+                                </DialogContent>
+                              </Dialog>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {applications.length === 0 && (
+                      <p className="text-center text-gray-500 py-8">No applications found.</p>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="application">
+            <Card>
+              <CardHeader>
+                <CardTitle>Application Stage</CardTitle>
+                <CardDescription>Applications waiting for review</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {isLoadingApplications ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {applications
+                      .filter((app) => app.stage === "application")
+                      .map((app) => (
+                        <div key={app.id} className="border rounded-lg p-4">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <h3 className="font-semibold">{app.name}</h3>
+                              <p className="text-sm text-gray-600">{app.email}</p>
+                            </div>
+                            <Button
+                              size="sm"
+                              onClick={() => unlockTest(app.id)}
+                              className="bg-yellow-600 hover:bg-yellow-700"
+                            >
+                              <TestTube className="h-4 w-4 mr-1" />
+                              Unlock Test
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    {applications.filter((app) => app.stage === "application").length === 0 && (
+                      <p className="text-center text-gray-500 py-8">No applications in this stage.</p>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="test">
+            <Card>
+              <CardHeader>
+                <CardTitle>Test Stage</CardTitle>
+                <CardDescription>Applications in testing phase</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {isLoadingApplications ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {applications
+                      .filter((app) => app.stage === "test")
+                      .map((app) => (
+                        <div key={app.id} className="border rounded-lg p-4">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <h3 className="font-semibold">{app.name}</h3>
+                              <p className="text-sm text-gray-600">{app.email}</p>
+                              <Badge variant="outline" className="text-green-600 mt-1">
+                                <Unlock className="h-3 w-3 mr-1" />
+                                Test Unlocked
+                              </Badge>
+                            </div>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button
+                                  size="sm"
+                                  onClick={() => setSelectedApp(app)}
+                                  className="bg-purple-600 hover:bg-purple-700"
+                                >
+                                  <Users className="h-4 w-4 mr-1" />
+                                  Assign Interviewer
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Assign Interviewer</DialogTitle>
+                                  <DialogDescription>Select an interviewer for {app.name}</DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-4">
+                                  <Select onValueChange={setNewInterviewer}>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select an interviewer" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {interviewers.map((interviewer) => (
+                                        <SelectItem key={interviewer} value={interviewer}>
+                                          {interviewer}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                  <Button
+                                    onClick={() => assignInterviewer(app.id, newInterviewer)}
+                                    disabled={!newInterviewer}
+                                    className="w-full"
+                                  >
+                                    Assign Interviewer
+                                  </Button>
+                                </div>
+                              </DialogContent>
+                            </Dialog>
+                          </div>
+                        </div>
+                      ))}
+                    {applications.filter((app) => app.stage === "test").length === 0 && (
+                      <p className="text-center text-gray-500 py-8">No applications in this stage.</p>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="interview">
+            <Card>
+              <CardHeader>
+                <CardTitle>Interview Stage</CardTitle>
+                <CardDescription>Applications ready for interviews</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {isLoadingApplications ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {applications
+                      .filter((app) => app.stage === "interview")
+                      .map((app) => (
+                        <div key={app.id} className="border rounded-lg p-4">
+                          <div className="space-y-2">
+                            <h3 className="font-semibold">{app.name}</h3>
+                            <p className="text-sm text-gray-600">{app.email}</p>
+                            <p className="text-sm text-gray-600">
+                              <strong>Interviewer:</strong> {app.assigned_interviewer}
+                            </p>
+                            <Badge className="bg-purple-100 text-purple-800">Interview Stage</Badge>
+                          </div>
+                        </div>
+                      ))}
+                    {applications.filter((app) => app.stage === "interview").length === 0 && (
+                      <p className="text-center text-gray-500 py-8">No applications in this stage.</p>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
