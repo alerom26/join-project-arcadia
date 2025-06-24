@@ -69,6 +69,42 @@ export type Database = {
           face_photo_url?: string | null
         }
       }
+      applications: {
+        // New table definition
+        Row: {
+          id: string // Corresponds to user_id
+          user_id: string // Foreign key to auth.users.id
+          name: string
+          email: string
+          stage: "application" | "test" | "interview" | "completed"
+          test_unlocked: boolean
+          assigned_interviewer: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          email: string
+          stage?: "application" | "test" | "interview" | "completed"
+          test_unlocked?: boolean
+          assigned_interviewer?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          email?: string
+          stage?: "application" | "test" | "interview" | "completed"
+          test_unlocked?: boolean
+          assigned_interviewer?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
   }
 }
