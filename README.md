@@ -4,5 +4,5 @@
 
 Your project is live at:
 
-**[joinus.projectarcadia.xyz)**
+**joinus.projectarcadia.xyz**
 
