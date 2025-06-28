@@ -161,13 +161,13 @@ export default function Dashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <h3 className="font-semibold mb-2">Monthly Community Gathering</h3>
+              <h3 className="font-semibold mb-2">25-26 Winter Start of Term Meeting</h3>
               <p className="text-gray-600 mb-4">
-                Join us for our monthly meeting to discuss ongoing projects and plan future initiatives.
+                Join us for our start of term meeting to discuss ongoing projects and plan future initiatives.
               </p>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-500">Every first Saturday</span>
-                <Badge variant="outline">Monthly</Badge>
+                <Badge variant="outline">Termly</Badge>
               </div>
             </CardContent>
           </Card>
