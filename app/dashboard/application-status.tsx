@@ -93,7 +93,7 @@ export default function ApplicationStatus() {
   }, [])
 
   const openApplication = () => {
-    window.open("https://tally.so/r/w2g76D", "_blank")
+    window.open("https://tally.so/r/m6zWyk", "_blank")
   }
 
   const openTest = () => {
