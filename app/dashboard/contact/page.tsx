@@ -57,7 +57,7 @@ export default function ContactPage() {
             <CardContent>
               <p className="text-gray-700 mb-2">For general inquiries, partnerships, or support:</p>
               <a href="mailto:info@projectarcadia.org" className="text-blue-600 hover:underline">
-                info@projectarcadia.org
+                info@projectarcadia.xyz
               </a>
             </CardContent>
           </Card>
@@ -69,12 +69,6 @@ export default function ContactPage() {
                 Call Us
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="text-gray-700 mb-2">Reach us by phone during business hours:</p>
-              <a href="tel:+1234567890" className="text-blue-600 hover:underline">
-                +1 (234) 567-890
-              </a>
-            </CardContent>
           </Card>
 
           <Card className="md:col-span-2">
@@ -85,11 +79,13 @@ export default function ContactPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-700 mb-2">Visit us at our main office:</p>
+              <p className="text-gray-700 mb-2">Chat to us at school!
+          
+              </p>
               <address className="not-italic text-gray-700">
-                123 Green Street, Suite 456
+                Kellett School
                 <br />
-                Eco City, HK 98765
+                KLB Campus
                 <br />
                 Hong Kong
               </address>
