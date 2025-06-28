@@ -18,77 +18,29 @@ export default function MeetingsPage() {
     }
   }, [router])
 
-  const upcomingMeetings = [
-    {
-      title: "Weekly Meeting",
-      date: "2025-06-26",
-      time: "12:40",
-      duration: "25-30 minutes",
-      location: "Study Pods",
-      type: "In-Person",
-      description:
-        "This is one of our regular weekly meetings that members will attend. You are welcome to attend and see how things go!",
-      agenda: [
-        "Register take",
-        "Announcements from Executive",
-        "Group discussion and work",
-        "Individual project work",
-        "Meeting phase out",
-      ],
-    },
-    {
-      title: "End of Year Project Arcadia Meeting",
-      date: "2025-06-27",
-      time: "12:00",
-      duration: "4 hours",
-      location: "Kai Tak Park",
-      type: "Field Work",
-      description: "Hands-on tree planting session as part of our urban reforestation initiative.",
-      agenda: [
-        "Site preparation and safety briefing",
-        "Tree planting techniques demonstration",
-        "Collaborative planting session",
-        "Site cleanup and documentation",
-      ],
-    },
-    {
-      title: "Environmental Education Seminar",
-      date: "2024-01-20",
-      time: "19:00",
-      duration: "1.5 hours",
-      location: "Online (Zoom)",
-      type: "Virtual",
-      description: "Educational session on climate change impacts and individual action strategies.",
-      agenda: [
-        "Climate change overview",
-        "Local environmental challenges",
-        "Personal action strategies",
-        "Community solutions discussion",
-      ],
-    },
-  ]
+  const upcomingMeetings = []
 
   const recurringMeetings = [
     {
-      title: "Monthly Community Gathering",
-      frequency: "First Saturday of every month",
-      time: "2:00 PM - 4:00 PM",
-      location: "Community Center, Kowloon Bay",
+      title: "Full Member Meeting",
+      frequency: "First Tuesday of every month",
+      time: "12:40 PM - 1:05 PM",
+      location: "Study Pods connected via Zoom",
       description: "Regular meeting for all members to discuss projects and plan activities.",
     },
     {
-      title: "Project Planning Sessions",
-      frequency: "Third Wednesday of every month",
-      time: "7:00 PM - 8:30 PM",
-      location: "Online (Zoom)",
-      description: "Focused planning sessions for specific environmental initiatives.",
+      title: "Standard Member Meetings",
+      frequency: "Every Thursday & Friday",
+      time: "12:40 PM - 1:05 PM",
+      location: "Study Pods (usually B1 + B2)",
+      description: "Focused planning sessions for specific project initiatives.",
     },
     {
-      title: "Volunteer Coordination",
-      frequency: "Every two weeks",
-      time: "6:00 PM - 7:00 PM",
-      location: "Hybrid (In-person & Online)",
-      description: "Coordination meetings for volunteer activities and event planning.",
+      title: "Executive Meeting",
+      frequency: "Every Wednesday",
+      time: "12:40 PM - 12:55 PM",
+      location: "Study Pods (usually C)",
+      description: "Coordination meetings for executives to discuss progress.",
     },
   ]
 
@@ -232,9 +184,9 @@ export default function MeetingsPage() {
                 <h3 className="font-semibold text-lg mb-3 text-green-700">How to Join</h3>
                 <ul className="space-y-2 text-gray-600">
                   <li>• Check the meeting schedule above</li>
-                  <li>• For in-person meetings, arrive 10 minutes early</li>
+                  <li>• For in-person meetings, a 5 minute transition time at the start is included.</li>
                   <li>• For virtual meetings, join via the provided Zoom link</li>
-                  <li>• Bring a notebook for taking notes</li>
+                  <li>• You are reccomended to take personal notes in our Shared OneNote</li>
                   <li>• Come prepared with questions or ideas to share</li>
                 </ul>
               </div>
