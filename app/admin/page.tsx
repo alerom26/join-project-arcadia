@@ -483,7 +483,12 @@ export default function AdminPage() {
                 <div className="space-y-4">
                   {!facePhotoPreview ? (
                     <div className="space-y-2">
-                      <Button type="button" variant="outline" onClick={startFaceCamera} className="w-full">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={startFaceCamera}
+                        className="w-full bg-transparent"
+                      >
                         <Camera className="mr-2 h-4 w-4" />
                         Take Photo
                       </Button>
