@@ -25,7 +25,7 @@ export default function WhatWeDoPage() {
       description: "Planting trees and creating green spaces in urban areas to improve air quality and biodiversity.",
       status: "Planning",
       impact: "In planning stage",
-      color: "green",
+      color: "orange",
     },
     {
       icon: <Recycle className="h-8 w-8 text-blue-600" />,
@@ -33,7 +33,7 @@ export default function WhatWeDoPage() {
       description: "Community-wide initiatives to reduce, reuse, and recycle waste materials effectively.",
       status: "Planning",
       impact: "In planning stage",
-      color: "blue",
+      color: "orange",
     },
     {
       icon: <Sun className="h-8 w-8 text-yellow-600" />,
@@ -41,15 +41,15 @@ export default function WhatWeDoPage() {
       description: "Promoting solar and wind energy adoption in residential and commercial buildings.",
       status: "Planning",
       impact: "In planning stage",
-      color: "yellow",
+      color: "orange",
     },
     {
       icon: <Droplets className="h-8 w-8 text-cyan-600" />,
       title: "Water Conservation",
       description: "Implementing rainwater harvesting and greywater recycling systems.",
-      status: "Active",
-      impact: "1000L daily savings",
-      color: "cyan",
+      status: "Planning",
+      impact: "In planning stage",
+      color: "orange",
     },
     {
       icon: <GraduationCap className="h-8 w-8 text-purple-600" />,
@@ -57,7 +57,7 @@ export default function WhatWeDoPage() {
       description: "Workshops and seminars to raise awareness about environmental issues and solutions.",
       status: "Planning",
       impact: "In planning stage",
-      color: "purple",
+      color: "orange",
     },
     {
       icon: <Leaf className="h-8 w-8 text-emerald-600" />,
@@ -65,7 +65,7 @@ export default function WhatWeDoPage() {
       description: "Helping to keep our Hong Kong beaches clean.",
       status: "Scheduling",
       impact: "In scheduling stage",
-      color: "emerald",
+      color: "yellow",
     },
   ]
 
