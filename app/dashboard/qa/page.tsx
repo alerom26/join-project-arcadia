@@ -40,7 +40,7 @@ export default function QAPage() {
       id: 2,
       question: "How can I join Project Arcadia?",
       answer:
-        "To join Project Arcadia, you need to request access through our location-verified system. You must be within 1km of our headquarters at 7 Lam Hing Street, Kowloon Bay, Hong Kong. After submitting your request, our admin team will review and approve your access.",
+        "To join Project Arcadia, you can go through our application process with an interview, online test and application. First, fill out the application on this website.",
       category: "Membership",
     },
     {
@@ -54,14 +54,14 @@ export default function QAPage() {
       id: 4,
       question: "How often do you hold meetings?",
       answer:
-        "We hold monthly community gatherings on the first Saturday of each month, project planning sessions on the third Wednesday, and volunteer coordination meetings every two weeks. Check our Meetings page for the most current schedule.",
+        "We hold mandatory meetings once a week at lunch. Executives will be required to attend 2 a week. On the first week of every month, we will have a full-member meeting.",
       category: "Meetings",
     },
     {
       id: 5,
       question: "What types of environmental projects do you work on?",
       answer:
-        "Our projects include urban reforestation, waste reduction programs, renewable energy advocacy, water conservation, environmental education, and promoting sustainable living practices. Each project is designed to create measurable environmental impact.",
+        "Our projects include urban reforestation, beach cleanups, small contributions, water conservation, environmental education, and promoting sustainable living practices. Each project is designed to create measurable environmental impact.",
       category: "Projects",
     },
     {
@@ -75,7 +75,7 @@ export default function QAPage() {
       id: 7,
       question: "Can I participate if I can't attend meetings regularly?",
       answer:
-        "We understand that people have different schedules and commitments. You can participate in specific projects, attend events when available, or contribute in other ways that fit your schedule.",
+        "It is okay if you can't attend meetings one-off but you need to attend meetings once a week at minimum to be a full member. You can still join as an honorary member and not have to attend meetings.",
       category: "Volunteering",
     },
     {
@@ -89,7 +89,7 @@ export default function QAPage() {
       id: 9,
       question: "Do you collaborate with other environmental organizations?",
       answer:
-        "Yes, we actively collaborate with other environmental groups, government agencies, and educational institutions. We believe that collective action is more effective than working in isolation.",
+        "Unfortunately, we are still developing but we hope to be able to partner with other organizations in the future.",
       category: "General",
     },
     {
@@ -103,7 +103,7 @@ export default function QAPage() {
       id: 11,
       question: "What safety measures do you have for field activities?",
       answer:
-        "Safety is our top priority. All field activities include safety briefings, proper equipment provision, and trained supervisors. We follow established safety protocols and provide necessary protective gear for all participants.",
+        "Safety is our top priority. All field activities include safety briefings and proper equipment provision. We follow established safety protocols and provide necessary protective gear for all participants.",
       category: "Safety",
     },
     {
