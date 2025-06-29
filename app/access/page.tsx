@@ -52,7 +52,7 @@ export default function AccessPage() {
 
         const distance = calculateDistance(userLocation.lat, userLocation.lng, TARGET_LOCATION.lat, TARGET_LOCATION.lng)
 
-        if (distance > 10) {
+        if (distance > 1) {
           setError("Access Denied")
         }
       },
@@ -85,7 +85,7 @@ export default function AccessPage() {
 
     const distance = calculateDistance(location.lat, location.lng, TARGET_LOCATION.lat, TARGET_LOCATION.lng)
 
-    if (distance > 10) {
+    if (distance > 1) {
       setError("Access Denied")
       return
     }

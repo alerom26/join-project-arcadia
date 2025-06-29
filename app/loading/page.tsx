@@ -15,8 +15,8 @@ const loadingMessages = [
   },
   {
     icon: <Globe className="h-8 w-8 text-blue-600" />,
-    title: "Global Community",
-    description: "Connecting environmental advocates from around the world.",
+    title: "Global Action",
+    description: "Empwering people around the world to make a change.",
   },
   {
     icon: <Users className="h-8 w-8 text-purple-600" />,
