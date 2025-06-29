@@ -142,10 +142,9 @@ export default function Dashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <h3 className="font-semibold mb-2">Urban Reforestation Project</h3>
+              <h3 className="font-semibold mb-2">Beach Cleanup</h3>
               <p className="text-gray-600 mb-4">
-                We're working to plant 1,000 trees across Hong Kong's urban areas this year. Join us in making our city
-                greener and more sustainable.
+                We're working to clean up some beaches in Hong Kong. This is most likely to be scheduled close to the start of next term. Please Contact Us if you would like to join.
               </p>
               <Badge variant="secondary" className="bg-green-100 text-green-800">
                 Active Project
